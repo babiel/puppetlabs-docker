@@ -6,9 +6,13 @@ if fact('osfamily') == 'windows'
   docker_args = 'docker_ee => true'
   tmp_path = 'C:/cygwin64/tmp'
 else
+  if fact('osfamily') == 'RedHat'
+    docker_args = "repo_opt => '--enablerepo=localmirror-extras'"
+  else
+    docker_args = ''
+  end
   install_dir = '/usr/local/bin'
   file_extension = ''
-  docker_args = ''
   tmp_path = '/tmp'
 end
 

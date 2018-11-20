@@ -112,7 +112,11 @@ networks:
         end
 
         if fact_on(host, 'osfamily') == 'windows'
-          apply_manifest_on(host, "class { 'docker': docker_ee => true }")
+          win_host = only_host_with_role(hosts, 'default')
+          retry_on_error_matching(60, 5, /connection failure running/) do
+            @windows_ip = win_host.ip
+          end
+          apply_manifest_on(host, "class { 'docker': docker_ee => true, extra_parameters => '\"insecure-registries\": [ \"#{@windows_ip}:5000\" ]' }")
           docker_path = "/cygdrive/c/Program Files/Docker"
           host.add_env_var('PATH', docker_path)
           puts "Waiting for box to come online"
