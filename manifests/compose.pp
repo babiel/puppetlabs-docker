@@ -24,12 +24,8 @@ class docker::compose(
   Optional[Pattern[/^present$|^absent$/]] $ensure          = 'present',
   Optional[String] $version                                = $docker::params::compose_version,
   Optional[String] $install_path                           = $docker::params::compose_install_path,
-  Optional[String] $proxy                                  = undef
+  Optional[Pattern[/^((http[s]?)?:\/\/)?([^:^@]+:[^:^@]+@|)([\da-z\.-]+)\.([\da-z\.]{2,6})(:[\d])?([\/\w \.-]*)*\/?$/]] $proxy = undef
 ) inherits docker::params {
-
-  if $proxy != undef {
-      validate_re($proxy, '^((http[s]?)?:\/\/)?([^:^@]+:[^:^@]+@|)([\da-z\.-]+)\.([\da-z\.]{2,6})(:[\d])?([\/\w \.-]*)*\/?$')
-  }
 
   if $::osfamily == 'windows' {
     $file_extension = '.exe'
