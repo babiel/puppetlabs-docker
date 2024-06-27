@@ -27,7 +27,7 @@ class docker::compose(
   Optional[Pattern[/^((http[s]?)?:\/\/)?([^:^@]+:[^:^@]+@|)([\da-z\.-]+)\.([\da-z\.]{2,6})(:[\d])?([\/\w \.-]*)*\/?$/]] $proxy = undef
 ) inherits docker::params {
 
-  if $::osfamily == 'windows' {
+  if $facts['os']['family'] == 'windows' {
     $file_extension = '.exe'
     $file_owner = 'Administrator'
   } else {
@@ -47,7 +47,7 @@ class docker::compose(
       $proxy_opt = ''
     }
 
-    if $::osfamily == 'windows' {
+    if $facts['os']['family'] == 'windows' {
       $docker_download_command = "if (Invoke-WebRequest ${docker_compose_url} ${proxy_opt} -UseBasicParsing -OutFile \"${docker_compose_location_versioned}\") { exit 0 } else { exit 1}"
 
       exec { 'Enable TLS 1.2 in powershell':

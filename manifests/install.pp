@@ -27,8 +27,8 @@ class docker::install (
   $docker_ee_package_name         = $docker::docker_ee_package_name
 ) {
   $docker_start_command = $docker::docker_start_command
-  if $::osfamily {
-    assert_type(Pattern[/^(Debian|RedHat|windows)$/], $::osfamily) |$a, $b| {
+  if $facts['os']['family'] {
+    assert_type(Pattern[/^(Debian|RedHat|windows)$/], $facts['os']['family']) |$a, $b| {
       fail translate(('This module only works on Debian, RedHat or Windows.'))
     }
   }
@@ -46,7 +46,7 @@ class docker::install (
     }
 
     if $docker::package_source {
-      case $::osfamily {
+      case $facts['os']['family'] {
         'Debian' : {
           $pk_provider = 'dpkg'
         }
@@ -82,7 +82,7 @@ class docker::install (
 
 
     } else {
-      if $::osfamily != 'windows' {
+      if $facts['os']['family'] != 'windows' {
         ensure_resource('package', 'docker', merge($docker_hash, {
           ensure => $ensure,
           name   => $docker::docker_package_name,

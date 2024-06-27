@@ -90,7 +90,7 @@ define docker::swarm(
 
   include docker::params
 
-  if $::osfamily == 'windows' {
+  if $facts['os']['family'] == 'windows' {
     $exec_environment = 'PATH=C:/Program Files/Docker/'
     $exec_path = ['c:/Windows/Temp/', 'C:/Program Files/Docker/']
     $exec_timeout = 3000
