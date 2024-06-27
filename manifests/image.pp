@@ -36,7 +36,7 @@ define docker::image(
   include docker::params
   $docker_command = $docker::params::docker_command
 
-  if $::osfamily == 'windows' {
+  if $facts['os']['family'] == 'windows' {
     $update_docker_image_template = 'docker/windows/update_docker_image.ps1.erb'
     $update_docker_image_path = 'C:/Windows/Temp/update_docker_image.ps1'
     $exec_environment = 'PATH=C:/Program Files/Docker/'
@@ -105,7 +105,7 @@ define docker::image(
     $image_remove  = "${docker_command} rmi ${image_force}${image}"
     $image_find    = "${docker_command} images -q ${image}"
   }
-  if $::osfamily == 'windows' {
+  if $facts['os']['family'] == 'windows' {
     $_image_find = "If (-not (${image_find}) ) { Exit 1 }"
   } else {
     $_image_find = "${image_find} | grep ."
@@ -116,7 +116,7 @@ define docker::image(
   } elsif $docker_dir {
     $image_install = "${docker_command} build -t ${image_arg} ${docker_dir}"
   } elsif $docker_file {
-    if $::osfamily == windows {
+    if $facts['os']['family'] == windows {
       $image_install = "Get-Content ${docker_file} | ${docker_command} build -t ${image_arg} -"
     } else {
       $image_install = "${docker_command} build -t ${image_arg} - < ${docker_file}"
@@ -124,7 +124,7 @@ define docker::image(
   } elsif $docker_tar {
     $image_install = "${docker_command} load -i ${docker_tar}"
   } else {
-    if $::osfamily == 'windows' {
+    if $facts['os']['family'] == 'windows' {
       $image_install = "& ${update_docker_image_path} ${image_arg}"
     } else {
       $image_install = "${update_docker_image_path} ${image_arg}"

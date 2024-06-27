@@ -216,7 +216,7 @@ define docker::run(
     $sanitised_after_array = regsubst($after_array, '[^0-9A-Za-z.\-_]', '-', 'G')
   }
 
-  if $::osfamily == 'windows' {
+  if $facts['os']['family'] == 'windows' {
     $exec_environment = 'PATH=C:/Program Files/Docker/;C:/Windows/System32/'
     $exec_timeout = 3000
     $exec_path = ['c:/Windows/Temp/', 'C:/Program Files/Docker/']
@@ -320,7 +320,7 @@ define docker::run(
         $run_template = undef
       }
       default: {
-        if $::osfamily != 'windows' {
+        if $facts['os']['family'] != 'windows' {
           fail translate(('Docker needs a Debian or RedHat based system.'))
         }
         elsif $ensure == 'present' {
@@ -336,7 +336,7 @@ define docker::run(
     }
 
     if $ensure == 'absent' {
-      if $::osfamily == 'windows'{
+      if $facts['os']['family'] == 'windows'{
         exec {
           "stop container ${service_prefix}${sanitised_title}":
           command     => "${docker_command} stop --time=${stop_wait_time} ${sanitised_title}",
@@ -365,7 +365,7 @@ define docker::run(
         provider    => $exec_provider,
         timeout     => $exec_timeout
       }
-      if $::osfamily != 'windows' {
+      if $facts['os']['family'] != 'windows' {
         file { "/etc/systemd/system/${service_prefix}${sanitised_title}.service":
           ensure => absent,
           path   => "/etc/systemd/system/${service_prefix}${sanitised_title}.service",

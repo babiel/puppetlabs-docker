@@ -47,7 +47,7 @@ define docker::registry(
 
   $docker_command = $docker::params::docker_command
 
-  if $::osfamily == 'windows' {
+  if $facts['os']['family'] == 'windows' {
     $exec_environment = ['PATH=C:/Program Files/Docker/']
     $exec_timeout = 3000
     $exec_path = ['c:/Windows/Temp/', 'C:/Program Files/Docker/']
@@ -88,7 +88,7 @@ define docker::registry(
     # server may be an URI, which can contain /
     $server_strip = regsubst($server, '/', '_', 'G')
 
-    if $::osfamily != 'windows' {
+    if $facts['os']['family'] != 'windows' {
       # no - with pw_hash
       $local_user_strip = regsubst($local_user, '-', '', 'G')
 

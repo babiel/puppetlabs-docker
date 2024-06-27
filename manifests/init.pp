@@ -488,8 +488,8 @@ class docker(
 ) inherits docker::params {
 
 
-  if $::osfamily {
-    assert_type(Pattern[/^(Debian|RedHat|windows)$/], $::osfamily) |$a, $b| {
+  if $facts['os']['family'] {
+    assert_type(Pattern[/^(Debian|RedHat|windows)$/], $facts['os']['family']) |$a, $b| {
       fail translate(('This module only works on Debian, Red Hat or Windows based systems.'))
     }
   }
@@ -505,7 +505,7 @@ class docker(
   }
 
   if $log_driver {
-    if $::osfamily == 'windows' {
+    if $facts['os']['family'] == 'windows' {
       assert_type(Pattern[/^(none|json-file|syslog|gelf|fluentd|splunk|etwlogs)$/], $log_driver) |$a, $b| {
         fail translate(('log_driver must be one of none, json-file, syslog, gelf, fluentd, splunk or etwlogs'))
       }
@@ -517,7 +517,7 @@ class docker(
   }
 
   if $storage_driver {
-    if $::osfamily == 'windows' {
+    if $facts['os']['family'] == 'windows' {
       assert_type(Pattern[/^(windowsfilter)$/], $storage_driver) |$a, $b| {
           fail translate(('Valid values for storage_driver on windows are windowsfilter'))
       }
@@ -528,7 +528,7 @@ class docker(
     }
   }
 
-  if ($bridge) and ($::osfamily == 'windows') {
+  if ($bridge) and ($facts['os']['family'] == 'windows') {
       assert_type(Pattern[/^(none|nat|transparent|overlay|l2bridge|l2tunnel)$/], $bridge) |$a, $b| {
         fail translate(('bridge must be one of none, nat, transparent, overlay, l2bridge or l2tunnel on Windows.'))
     }
@@ -580,7 +580,7 @@ class docker(
       $docker_start_command = $docker::docker_ee_start_command
       $docker_package_name = $docker::docker_ee_package_name
     } else {
-        case $::osfamily {
+        case $facts['os']['family'] {
           'Debian' : {
             $package_location = $docker_ce_source_location
             $package_key_source = $docker_ce_key_source
@@ -589,7 +589,7 @@ class docker(
             $release = $docker_ce_release
             }
           'Redhat' : {
-            $package_location = "https://download.docker.com/linux/centos/${::operatingsystemmajrelease}/${::architecture}/${docker_ce_channel}"
+            $package_location = "https://download.docker.com/linux/centos/${facts['os']['release']['major']}/${facts['os']['architecture']}/${docker_ce_channel}"
             $package_key_source = $docker_ce_key_source
             $package_key_check_source = true
             }
@@ -602,7 +602,7 @@ class docker(
         $docker_package_name = $docker_ce_package_name
     }
   } else {
-    case $::osfamily {
+    case $facts['os']['family'] {
       'Debian' : {
         $package_location = $docker_package_location
         $package_key_source = $docker_package_key_source
